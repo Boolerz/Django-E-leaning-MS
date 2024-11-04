@@ -1,0 +1,31 @@
+ # Ignore Python bytecode
+__pycache__/
+*.py[cod]
+
+# Ignore database files
+db.sqlite3
+
+# Ignore static files
+/staticfiles/
+/static/
+
+# Ignore media files (if you have media uploads)
+media/
+
+# Ignore environment variables
+.env
+
+# Ignore IDE and editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Ignore log files
+*.log
+
+# Ignore compiled files
+*.egg-info/
+dist/
+build/
+
