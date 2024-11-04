@@ -29,3 +29,6 @@ media/
 dist/
 build/
 
+db.sqlite3
+
+
