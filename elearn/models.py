@@ -4,18 +4,15 @@ from django.utils.html import escape, mark_safe
 from django.contrib.auth import get_user_model
 from embed_video.fields import EmbedVideoField
 
-
-
 class User(AbstractUser):
     is_learner = models.BooleanField(default=False)
     is_instructor = models.BooleanField(default=False)
     is_admin = models.BooleanField(default=False)
 
 
-
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    avatar = models.ImageField(upload_to = '', default = 'no-img.jpg', blank=True)
+    avatar = models.ImageField(upload_to='', default='no-img.jpg', blank=True)
     first_name = models.CharField(max_length=255, default='')
     last_name = models.CharField(max_length=255, default='')
     email = models.EmailField(default='none@email.com')
@@ -32,12 +29,10 @@ class Profile(models.Model):
         return self.user.username
 
 
-
 class Announcement(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     content = models.TextField()
     posted_at = models.DateTimeField(auto_now=True, null=True)
-
 
     def __str__(self):
         return str(self.content)
@@ -53,8 +48,9 @@ class Course(models.Model):
     def get_html_badge(self):
         name = escape(self.name)
         color = escape(self.color)
-        html = '<span class="badge badge-primary" style="background-color: %s">%s</span>' % (color, name)
+        html = f'<span class="badge badge-primary" style="background-color: {color}">{name}</span>'
         return mark_safe(html)
+
 
 class Tutorial(models.Model):
     title = models.CharField(max_length=50)
@@ -73,16 +69,14 @@ class Notes(models.Model):
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
 
-
     def __str__(self):
         return self.title
 
     def delete(self, *args, **kwargs):
         self.file.delete()
         self.cover.delete()
-        super().delete(*args, **kwargs)    
+        super().delete(*args, **kwargs)
 
-  
 
 class Quiz(models.Model):
     owner = models.ForeignKey(User, on_delete=models.CASCADE, related_name='quizzes')
@@ -114,17 +108,16 @@ class Learner(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, primary_key=True)
     quizzes = models.ManyToManyField(Quiz, through='TakenQuiz')
     interests = models.ManyToManyField(Course, related_name='interested_learners')
+    course = models.ForeignKey(Course, on_delete=models.SET_NULL, null=True, blank=True, related_name='learners')
 
     def get_unanswered_questions(self, quiz):
-        answered_questions = self.quiz_answers \
-            .filter(answer__question__quiz=quiz) \
-            .values_list('answer__question__pk', flat=True)
+        answered_questions = self.quiz_answers.filter(answer__question__quiz=quiz).values_list(
+            'answer__question__pk', flat=True)
         questions = quiz.questions.exclude(pk__in=answered_questions).order_by('text')
         return questions
 
     def __str__(self):
         return self.user.username
-
 
 
 class Instructor(models.Model):
@@ -139,9 +132,25 @@ class TakenQuiz(models.Model):
     date = models.DateTimeField(auto_now_add=True)
 
 
-
 class LearnerAnswer(models.Model):
     student = models.ForeignKey(Learner, on_delete=models.CASCADE, related_name='quiz_answers')
-    answer = models.ForeignKey(Answer, on_delete=models.CASCADE, related_name='+')    
+    answer = models.ForeignKey(Answer, on_delete=models.CASCADE, related_name='+')
 
+class Lesson(models.Model):
+    course = models.ForeignKey(Course, on_delete=models.CASCADE)
+    day_of_week = models.CharField(max_length=10, choices=[
+        ('Monday', 'Monday'),
+        ('Tuesday', 'Tuesday'),
+        ('Wednesday', 'Wednesday'),
+        ('Thursday', 'Thursday'),
+        ('Friday', 'Friday'),
+        ('Saturday', 'Saturday'),
+        ('Sunday', 'Sunday'),
+    ])
+    start_time = models.TimeField()
+    end_time = models.TimeField()
+    google_meet_link = models.URLField(max_length=200, blank=True, null=True)
+    instructor = models.ForeignKey(Instructor, on_delete=models.SET_NULL, null=True)
 
+    def __str__(self):
+        return f"{self.course.name} - {self.day_of_week} {self.start_time}"

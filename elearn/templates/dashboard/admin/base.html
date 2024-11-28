@@ -78,45 +78,47 @@
     </li>
     <li class="nav-item">
         <a class="nav-link" href="{% url 'isign' %}">
-        <i class="fas fa-chalkboard-teacher"></i>
+            <i class="fas fa-chalkboard-teacher"></i>
             <span style="color: white">Register Instructor</span>
         </a>
     </li>
-     <li class="nav-item">
-        <a class="nav-link" href="{% url 'addlearner' %}">
-        <i class="fas fa-user-graduate"></i>
-            <span style="color: white">Register Learner</span>
+    <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" id="learnerDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <i class="fas fa-user-graduate"></i>
+            <span style="color: white">Learners</span>
         </a>
+        <div class="dropdown-menu dropdown-menu-right" aria-labelledby="learnerDropdown">
+            <a class="dropdown-item" href="{% url 'learners_list' %}">View Learners</a>
+            <div class="dropdown-divider"></div>
+            <a class="dropdown-item" href="{% url 'addlearner' %}">Add New Learner</a>
+        </div>
     </li>
     <li class="nav-item">
         <a class="nav-link" href="{% url 'course' %}">
-        <i class="fas fa-book-reader"></i>
-            <span style="color: white">Register Course</span>
+            <i class="fas fa-book-reader"></i>
+            <span style="color: white">Manage Courses</span>
         </a>
     </li>
-
-
     <li class="nav-item dropdown no-arrow">
-                            <a class="nav-link dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" href="">
-        <i class="fas fa-bell"></i>
-
+        <a class="nav-link dropdown-toggle" href="#" id="announcementDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <i class="fas fa-bell"></i>
             <span style="color: white">Announcements</span>
         </a>
-            <div class="dropdown-menu dropdown-menu-right" aria-labelledby="userDropdown">
-                <a class="dropdown-item" href="{% url 'apost' %}">Post Announcements</a>
-                <div class="dropdown-divider"></div>
-                <a class="dropdown-item" href="{% url 'alpost' %}">List Announcements</a>
-                <div class="dropdown-divider"></div>
-                <a class="dropdown-item" href="{% url 'alistalltise' %}">Delete Announcements</a>
-            </div>
-        </li>
-
+        <div class="dropdown-menu dropdown-menu-right" aria-labelledby="announcementDropdown">
+            <a class="dropdown-item" href="{% url 'apost' %}">Post Announcements</a>
+            <div class="dropdown-divider"></div>
+            <a class="dropdown-item" href="{% url 'alpost' %}">List Announcements</a>
+            <div class="dropdown-divider"></div>
+            <a class="dropdown-item" href="{% url 'alistalltise' %}">Delete Announcements</a>
+        </div>
+    </li>
+    
 
 
     <li class="nav-item">
         <a class="nav-link" href="{% url 'aluser' %}">
             <i class="fas fa-users"></i>
-            <span style="color: white">Manager Users</span>
+            <span style="color: white">Manage Users</span>
         </a>
     </li>
 

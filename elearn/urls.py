@@ -1,7 +1,7 @@
 from django.urls import path, include
 from . import views
 from django.contrib.auth import views as auth_views
-
+from .views import learners_list
 
 
 urlpatterns = [
@@ -15,6 +15,7 @@ path('lsign/', views.LearnerSignUpView.as_view(), name='lsign'),
 path('login_form/', views.login_form, name='login_form'),
 path('login/', views.loginView, name='login'),
 path('logout/', views.logoutView, name='logout'),
+path('learners/', learners_list, name='learners_list'),
 
 
 # Admin URLs

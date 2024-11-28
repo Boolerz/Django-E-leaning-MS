@@ -41,7 +41,9 @@ from django.contrib.auth.forms import (AuthenticationForm, UserCreationForm,
                                        PasswordChangeForm)
 
 from django.contrib.auth import update_session_auth_hash   
-from .models import Course                                    
+from .models import Course
+from .models import Learner, Course    
+                               
 
 
 from bootstrap_modal_forms.generic import (
@@ -138,7 +140,21 @@ class AdminLearner(CreateView):
         messages.success(self.request, 'Learner Was Added Successfully')
         return redirect('addlearner')
 
+def learners_list(request):
+    courses = Course.objects.all()  # Fetch all courses
+    selected_course = request.GET.get('course')  # Get course filter from request
+    learners = Learner.objects.all()  # Fetch all learners
 
+    # Filter learners if a course is selected
+    if selected_course:
+        learners = learners.filter(interests__id=selected_course)
+
+    context = {
+        'learners': learners,
+        'courses': courses,
+        'selected_course': selected_course
+    }
+    return render(request, 'dashboard/admin/learners_list.html', context)
 
 def course(request):
     if request.method == 'POST':
