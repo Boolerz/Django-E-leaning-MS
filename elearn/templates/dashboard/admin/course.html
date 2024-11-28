@@ -2,94 +2,121 @@
 
 {% block body %}
 
-        <div class="container-fluid">
-        <div class="row">
-          <div class="col-12 mb-3">
-          <div class="col-12 mb-3">
-           
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12 mb-3">
 
-                <div id="content-wrapper" style="padding-top: 30px">
-        <div class="container-fluid">
-            <ol class="breadcrumb">
-                             
-                <li class="breadcrumb-item">
-                    <a href="">Register New Course</a>
-                </li>
-                
-            </ol>
-            <div class="card mb-3">
-                <div class="card-header">
-                    <i class="fas fa-table text-primary"></i>
-                    E-Learning Management System
-                </div>
-                <div class="card-body">
-                    {% for message in messages %}
-                        <div class="alert alert-{{ message.tags }} alert-dismissible" role="alert">
-                            {{ message }}
+
+
+            <div id="content-wrapper" style="padding-top: 30px">
+                <div class="container-fluid">
+                    <ol class="breadcrumb">
+
+                        <li class="breadcrumb-item">
+                            <a href="">Register New Course</a>
+                        </li>
+
+
+                    </ol>
+                    <div class="card mb-3">
+                        <div class="card-header">
+                            <i class="fas fa-table text-primary"></i>
+                            E-Learning Management System
                         </div>
-                    {% endfor %}
+                        <div class="card-body">
+                            {% for message in messages %}
+                                <div class="alert alert-{{ message.tags }} alert-dismissible" role="alert">
+                                    {{ message }}
+                                </div>
+                            {% endfor %}
 
-              <form method="post" action="{% url 'course' %}">
-                  {% csrf_token %}
+                            <!-- Course Registration Form -->
+                            <form method="post" action="{% url 'course' %}">
+                                {% csrf_token %}
 
-                	  <div class="form-group">
-            <div class="row">
-                <div class="col"><label>Course Title</label><br>
+                                <div class="form-group">
+                                    <div class="row">
+                                        <div class="col">
+                                            <label>Course Title</label><br>
+                                            <input type="text" name="name" class="form-control" required>
+                                        </div>
+                                    </div>
+                                </div>
+                
+                
+                                <div class="form-group">
+                                    <div class="row">
+                                        <div class="col">
+                                            <label>Course Color Code (Default: #007bff)</label><br>
+                                            <input type="text" name="color" class="form-control" placeholder="#007bff" required>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="row">
+                                        <button type="submit" class="btn btn-primary">Submit</button>
+                                    </div>
+                                </div>
+                            </form>
 
-                	<input type="text" name="name">        
-            </div>          
-        </div>
-      </div>
+                            <!-- Course List -->
+                            <h3 class="mt-4">Registered Courses</h3>
+                            <table class="table table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Course Title</th>
+                                        <th>Color Code</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for course in courses %}
+                                        <tr>
+                                            <td>{{ forloop.counter }}</td>
+                                            <td>{{ course.name }}</td>
+                                            <td>
+                                                <span style="color: {{ course.color }};">{{ course.color }}</span>
+                                            </td>
+                                            <td>
+                                                <a href="#" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#deleteModal{{ course.id }}">Delete</a>
+                                            </td>
+                                        </tr>
 
-        
-                <div class="form-group">
-            <div class="row">
-                <div class="col"><label>Course Color Code, Default Color #007bff</label><br>
-                  <input type="text" name="color">        
-            </div>          
-        </div>
-      </div>
-
-          <div class="form-group">
-            <div class="row">
-            	<button type="submit" style="background-color:" class="btn btn btn-primary" href="">Submit</button>
-
-            </div>          
-        </div>  
-</form>
-                      
-               </div>
+                                        <!-- Delete Confirmation Modal -->
+                                        <div class="modal fade" id="deleteModal{{ course.id }}" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel{{ course.id }}" aria-hidden="true">
+                                            <div class="modal-dialog" role="document">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title" id="deleteModalLabel{{ course.id }}" style="color: blue;">Ready to Delete?</h5>
+                                                        <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                                                            <span aria-hidden="true">×</span>
+                                                        </button>
+                                                    </div>
+                                                    <div class="modal-body" style="color: red;">
+                                                        <h5>Are you sure you want to delete the course "{{ course.name }}"?</h5>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button class="btn btn-success" type="button" data-dismiss="modal">Cancel</button>
+                                                        <a class="btn btn-danger" href="{% url 'delete_course' course.id %}">Delete</a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    {% empty %}
+                                        <tr>
+                                            <td colspan="4" class="text-center">No courses registered yet.</td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
                 </div>
-            </div>
-        </div>
-    </div>
-
-
-<div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
-     aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel" style="color: blue">Ready to Delete?</h5>
-                <button class="close" type="button" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">×</span>
-                </button>
-            </div>
-            <div class="modal-body" style="color: red;"><h5> Select "Delete" below if you want to Delete</h5></div>
-            <div class="modal-footer">
-                <button class="btn btn-success" type="button" data-dismiss="modal">Cancel</button>
-               <a class="btn btn-danger" href="">Delete</a>
             </div>
         </div>
     </div>
 </div>
-
-
-      
-          </div>
-        </div>
-      </div>
-    </div>
 
 {% endblock body %}
 
@@ -140,12 +167,8 @@
             });
           }
           updateBookModalForm();
-
-          
-
-
     
-         
+       
 
           // Read and Delete book buttons open modal with id="modal"
           // The formURL is retrieved from the data of the element
@@ -160,10 +183,3 @@
       });
   </script>
 {% endblock extrascripts %}
-
-
-
-
-
-
-

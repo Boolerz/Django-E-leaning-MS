@@ -20,6 +20,7 @@ path('logout/', views.logoutView, name='logout'),
 # Admin URLs
 path('dashboard/', views.dashboard, name='dashboard'),
 path('course/', views.course, name='course'),
+path('course/delete/<int:pk>/', views.delete_course, name='delete_course'),
 path('isign/', views.InstructorSignUpView.as_view(), name='isign'),
 path('addlearner/', views.AdminLearner.as_view(), name='addlearner'),
 path('apost/', views.AdminCreatePost.as_view(), name='apost'),

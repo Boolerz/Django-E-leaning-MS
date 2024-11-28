@@ -40,7 +40,8 @@ from django.core.files.storage import FileSystemStorage
 from django.contrib.auth.forms import (AuthenticationForm, UserCreationForm,
                                        PasswordChangeForm)
 
-from django.contrib.auth import update_session_auth_hash                                       
+from django.contrib.auth import update_session_auth_hash   
+from .models import Course                                    
 
 
 from bootstrap_modal_forms.generic import (
@@ -140,18 +141,25 @@ class AdminLearner(CreateView):
 
 
 def course(request):
-	if request.method == 'POST':
-		name = request.POST['name']
-		color = request.POST['color']
+    if request.method == 'POST':
+        name = request.POST['name']
+        color = request.POST['color']
 
-		a = Course(name=name, color=color)
-		a.save()
-		messages.success(request, 'New Course Was Registed Successfully')
-		return redirect('course')
-	else:
-	     return render(request, 'dashboard/admin/course.html')	
+        a = Course(name=name, color=color)
+        a.save()
+        messages.success(request, 'New Course Was Registered Successfully')
+        return redirect('course')
+    else:
+        courses = Course.objects.all()  # Fetch all courses
+        return render(request, 'dashboard/admin/course.html', {'courses': courses})
 
-
+def delete_course(request, pk):
+    course = get_object_or_404(Course, pk=pk)
+    if request.method == 'POST':  # To confirm deletion
+        course.delete()
+        messages.success(request, 'Course was deleted successfully.')
+        return redirect('course')  # Redirect to the course listing page or admin dashboard
+    return render(request, 'dashboard/admin/confirm_delete3.html', {'course': course})
 
 class AdminCreatePost(CreateView):
     model = Announcement
