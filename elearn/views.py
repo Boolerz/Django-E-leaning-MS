@@ -42,8 +42,9 @@ from django.contrib.auth.forms import (AuthenticationForm, UserCreationForm,
 
 from django.contrib.auth import update_session_auth_hash   
 from .models import Course
-from .models import Learner, Course    
-                               
+from .models import Timetable,Learner, Course, Lesson, Instructor
+from django.contrib.auth.decorators import user_passes_test
+from .forms import TimetableForm
 
 
 from bootstrap_modal_forms.generic import (
@@ -97,7 +98,51 @@ def loginView(request):
 		    return redirect('login_form')
 
 
+def timetable_view(request):
+    """
+    Generic timetable view for all users.
+    """
+    timetable = {}
+    lessons = Lesson.objects.all().order_by('day_of_week', 'start_time')
+    for lesson in lessons:
+        if lesson.day_of_week not in timetable:
+            timetable[lesson.day_of_week] = []
+        timetable[lesson.day_of_week].append(lesson)
 
+    return render(request, 'timetable.html', {'timetable': timetable})
+def add_lesson(request):
+    if request.method == 'POST':
+        # Handle form submission and create a new lesson
+        # ...
+        return redirect('admin_timetable')  # Redirect to admin timetable view
+    else:
+        # Render a form to add a new lesson
+        form = TimetableForm()  # Assuming TimetableForm is for adding lessons
+        return render(request, 'edit_timetable.html', {'form': form})
+
+def edit_timetable(request, pk):
+    timetable = get_object_or_404(Timetable, pk=pk)
+    courses = Course.objects.all()  # Fetch all available courses
+    instructors = Instructor.objects.all()  # Fetch all instructors
+
+    if request.method == 'POST':
+        timetable.day_of_week = request.POST.get('day_of_week')
+        timetable.start_time = request.POST.get('start_time')
+        timetable.end_time = request.POST.get('end_time')
+        timetable.subject_id = request.POST.get('subject')  # Save selected course
+        timetable.instructor_id = request.POST.get('instructor')  # Save selected instructor
+        timetable.location = request.POST.get('location')
+        timetable.google_meet_link = request.POST.get('google_meet_link')  # New field
+
+        timetable.save()
+        messages.success(request, "Timetable updated successfully!")
+        return redirect('admin_timetable')  # Redirect to timetable listing page
+
+    return render(request, 'edit_timetable.html', {
+        'timetable': timetable,
+        'courses': courses,
+        'instructors': instructors
+    })
 
 
 # Admin Views
@@ -301,7 +346,18 @@ def auser_profile(request):
     users = {'users': users}
     return render(request, 'dashboard/admin/user_profile.html', users)     
 
+def admin_timetable(request):
+    """
+    Fetch and group lessons by day of the week for the admin timetable view.
+    """
+    timetable = {}
+    lessons = Timetable.objects.all().order_by('day_of_week', 'start_time')
+    for lesson in lessons:
+        if lesson.day_of_week not in timetable:
+            timetable[lesson.day_of_week] = []
+        timetable[lesson.day_of_week].append(lesson)  # Pass the entire lesson object
 
+    return render(request, 'dashboard/admin/admin_timetable.html', {'timetable': timetable})
 
 # Instructor Views
 def home_instructor(request):
@@ -689,6 +745,17 @@ def update_file(request, pk):
     else:
         return render(request, 'dashboard/instructor/update.html')
 
+def instructor_timetable(request):
+    # Fetch timetable data
+    timetable = {}
+    lessons = Lesson.objects.all().order_by('day_of_week', 'start_time')
+    for lesson in lessons:
+        if lesson.day_of_week not in timetable:
+            timetable[lesson.day_of_week] = []
+        timetable[lesson.day_of_week].append(lesson)
+
+    return render(request, 'dashboard/instructor/instructor_timetable.html', {'timetable': timetable})
+
 
 # Learner Views
 def home_learner(request):
@@ -876,3 +943,13 @@ def take_quiz(request, pk):
         'form': form,
         'progress': progress
     })        
+def learner_timetable(request):
+    # Fetch timetable data
+    timetable = {}
+    lessons = Lesson.objects.all().order_by('day_of_week', 'start_time')
+    for lesson in lessons:
+        if lesson.day_of_week not in timetable:
+            timetable[lesson.day_of_week] = []
+        timetable[lesson.day_of_week].append(lesson)
+
+    return render(request, 'dashboard/learner/learner_timetable.html', {'timetable': timetable})

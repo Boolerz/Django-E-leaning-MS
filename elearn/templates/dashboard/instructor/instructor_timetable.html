@@ -1,0 +1,84 @@
+{% extends 'dashboard/instructor/base.html' %}
+
+{% block body %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12 mb-3">
+            <div id="content-wrapper">
+                <div class="container-fluid">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item">
+                            <a href="#" style="color: #999965; font-weight: bold; letter-spacing: 10px">Case Inventory System</a>
+                        </li>
+                    </ol>
+                    <div class="card mb-3">
+                        <div class="card-header">
+                            <i class="fas fa-table text-warning"></i>
+                            Weekly Timetable
+                        </div>
+                        <div class="card-body">
+                            {% for message in messages %}
+                                <div class="alert alert-{{ message.tags }} alert-dismissible" role="alert">
+                                    {{ message }}
+                                </div>
+                            {% endfor %}
+
+                            <div class="row">
+                                <div class="col-12">
+                                    <table class="table table-bordered">
+                                        <thead>
+                                            <tr>
+                                                <th>Day</th>
+                                                <th>Time</th>
+                                                <th>Lesson</th>
+                                                <th>Instructor</th>
+                                                <th>Meeting Link</th>
+                                                {% if user.is_staff %}
+                                                    <th>Actions</th> <!-- Only for Admin -->
+                                                {% endif %}
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for day, lessons in timetable.items %}
+                                                <tr>
+                                                    <td rowspan="{{ lessons|length }}">{{ day }}</td>
+                                                    {% for lesson in lessons %}
+                                                        {% if not forloop.first %}<tr>{% endif %}
+                                                            <td>{{ lesson.start_time }} - {{ lesson.end_time }}</td>
+                                                            <td>{{ lesson.course.name }}</td>
+                                                            <td>{{ lesson.instructor.get_full_name }}</td>
+                                                            <td>
+                                                                {% if lesson.google_meet_link %}
+                                                                    <a href="{{ lesson.google_meet_link }}" target="_blank">Join Class</a>
+                                                                {% else %}
+                                                                    No Link Provided
+                                                                {% endif %}
+                                                            </td>
+                                                            {% if user.is_staff %}
+                                                                <td>
+                                                                    <!-- Admin-specific actions (Edit, Delete) -->
+                                                                    <a href="{% url 'edit_lesson' lesson.id %}" class="btn btn-warning btn-sm">Edit</a>
+                                                                    <a href="{% url 'delete_lesson' lesson.id %}" class="btn btn-danger btn-sm">Delete</a>
+                                                                </td>
+                                                            {% endif %}
+                                                        </tr>
+                                                    {% endfor %}
+                                                </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                    {% if user.is_staff %}
+                                        <!-- Admin Button to Add a New Lesson -->
+                                        <a href="{% url 'edit_timetable' %}" class="btn btn-primary">Add New Lesson</a>
+                                    {% endif %}
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

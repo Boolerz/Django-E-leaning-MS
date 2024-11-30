@@ -3,9 +3,11 @@ from django.contrib.auth.forms import UserCreationForm
 from django.db import transaction
 from django.forms.utils import ValidationError
 from django import forms
+from elearn.models import Lesson
 
 from elearn.models import (Answer, Question, Learner, LearnerAnswer,
                               Course, User, Announcement)
+from .models import Timetable, Course, Instructor
 
 
 
@@ -153,3 +155,20 @@ class LearnerCourse(forms.ModelForm):
         learner = Learner()
         learner.interests.add(*self.cleaned_data.get('interests'))
         return learner_id
+
+class LessonForm(forms.ModelForm):
+    class Meta:
+        model = Lesson
+        fields = ['course', 'day_of_week', 'start_time', 'end_time', 'google_meet_link', 'instructor']
+
+class TimetableForm(forms.ModelForm):
+    class Meta:
+        model = Timetable
+        fields = ['day_of_week', 'start_time', 'end_time', 'subject', 'instructor', 'location', 'google_meet_link']
+        widgets = {
+            'subject': forms.Select(attrs={'class': 'form-control'}),
+            'instructor': forms.Select(attrs={'class': 'form-control'}),
+            'start_time': forms.TimeInput(attrs={'class': 'form-control', 'type': 'time'}),
+            'end_time': forms.TimeInput(attrs={'class': 'form-control', 'type': 'time'}),
+            'google_meet_link': forms.URLInput(attrs={'class': 'form-control'}),
+        }

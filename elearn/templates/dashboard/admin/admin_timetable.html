@@ -1,0 +1,119 @@
+{% extends 'dashboard/admin/base.html' %}
+
+{% block body %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12 mb-3">
+            <div id="content-wrapper">
+                <div class="container-fluid">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item">
+                            <a href="#" style="color: #999965; font-weight: bold; letter-spacing: 10px">
+                                {% if timetable %}Edit{% else %}Add New{% endif %} Timetable
+                            </a>
+                        </li>
+                    </ol>
+                    <div class="card mb-3">
+                        <div class="card-header">
+                            <i class="fas fa-edit text-warning"></i>
+                            {% if timetable %}Edit{% else %}Add New{% endif %} Timetable
+                        </div>
+                        <div class="card-body">
+                            {% for message in messages %}
+                                <div class="alert alert-{{ message.tags }} alert-dismissible" role="alert">
+                                    {{ message }}
+                                </div>
+                            {% endfor %}
+
+                            <div class="row">
+                                <div class="col-12">
+                                    <form method="post">
+                                        {% csrf_token %}
+
+                                        {% if form.errors %}
+                                            <div class="alert alert-danger">
+                                                <ul>
+                                                    {% for field in form %}
+                                                        {% for error in field.errors %}
+                                                            <li>{{ error }}</li>
+                                                        {% endfor %}
+                                                    {% endfor %}
+                                                    {% for error in form.non_field_errors %}
+                                                        <li>{{ error }}</li>
+                                                    {% endfor %}
+                                                </ul>
+                                            </div>
+                                        {% endif %}
+
+                                        <div class="form-group">
+                                            <label for="day_of_week">Day of the Week</label>
+                                            <select id="day_of_week" name="day_of_week" class="form-control" required>
+                                                <option value="" disabled selected>Select a day</option>
+                                                <option value="Monday" {% if timetable.day_of_week == "Monday" %}selected{% endif %}>Monday</option>
+                                                <option value="Tuesday" {% if timetable.day_of_week == "Tuesday" %}selected{% endif %}>Tuesday</option>
+                                                <option value="Wednesday" {% if timetable.day_of_week == "Wednesday" %}selected{% endif %}>Wednesday</option>
+                                                <option value="Thursday" {% if timetable.day_of_week == "Thursday" %}selected{% endif %}>Thursday</option>
+                                                <option value="Friday" {% if timetable.day_of_week == "Friday" %}selected{% endif %}>Friday</option>
+                                                <option value="Saturday" {% if timetable.day_of_week == "Saturday" %}selected{% endif %}>Saturday</option>
+                                                <option value="Sunday" {% if timetable.day_of_week == "Sunday" %}selected{% endif %}>Sunday</option>
+                                            </select>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="start_time">Start Time</label>
+                                            <input type="time" id="start_time" name="start_time" class="form-control"
+                                                value="{{ timetable.start_time|default:'' }}" required>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="end_time">End Time</label>
+                                            <input type="time" id="end_time" name="end_time" class="form-control"
+                                                value="{{ timetable.end_time|default:'' }}" required>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="subject">Subject</label>
+                                            <select id="subject" name="subject" class="form-control" required>
+                                                <option value="" disabled selected>Select a subject</option>
+                                                {% for course in courses %}
+                                                    <option value="{{ course.id }}" 
+                                                        {% if timetable.subject_id == course.id %}selected{% endif %}>
+                                                        {{ course.name }}
+                                                    </option>
+                                                {% endfor %}
+                                            </select>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="instructor">Instructor</label>
+                                            <select id="instructor" name="instructor" class="form-control" required>
+                                                <option value="" disabled selected>Select an instructor</option>
+                                                {% for instructor in instructors %}
+                                                    <option value="{{ instructor.id }}" 
+                                                        {% if timetable.instructor_id == instructor.id %}selected{% endif %}>
+                                                        {{ instructor.name }}
+                                                    </option>
+                                                {% endfor %}
+                                            </select>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="google_meet_link">Google Meet Link</label>
+                                            <input type="url" id="google_meet_link" name="google_meet_link" 
+                                                class="form-control" placeholder="https://meet.google.com/..." 
+                                                value="{{ timetable.google_meet_link|default:'' }}">
+                                        </div>
+
+                                        <button type="submit" class="btn btn-primary">{% if timetable %}Save Changes{% else %}Add Lesson{% endif %}</button>
+                                        <a class="btn btn-secondary" href="{% url 'admin_timetable' %}">Cancel</a>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

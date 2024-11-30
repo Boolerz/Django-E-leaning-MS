@@ -16,6 +16,10 @@ path('login_form/', views.login_form, name='login_form'),
 path('login/', views.loginView, name='login'),
 path('logout/', views.logoutView, name='logout'),
 path('learners/', learners_list, name='learners_list'),
+path('custom-admin/timetable/add-lesson/', views.admin_timetable, name='admin_timetable'),
+path('timetable/edit/<int:pk>/', views.edit_timetable, name='edit_timetable'),
+path('timetable/', views.timetable_view, name='timetable'),
+path('custom-admin/timetable/add-lesson/', views.add_lesson, name='add_lesson'),
 
 
 # Admin URLs
@@ -34,7 +38,6 @@ path('create_user_form/', views.create_user_form, name='create_user_form'),
 path('create_user/', views.create_user, name='create_user'),
 path('acreate_profile/', views.acreate_profile, name='acreate_profile'),
 path('auser_profile/', views.auser_profile, name='auser_profile'),
-
 
 
 # Instructor URLs
@@ -59,6 +62,7 @@ path('listnotes/', views.LNotesList.as_view(), name='lnotes'),
 path('iadd_notes/', views.iadd_notes, name='iadd_notes'),
 path('publish_notes/', views.publish_notes, name='publish_notes'),
 path('update_file/<int:pk>', views.update_file, name='update_file'),
+path('instructor/timetable/', views.instructor_timetable, name='instructor_timetable'),
 
 
 
@@ -75,44 +79,6 @@ path('interests/', views.LearnerInterestsView.as_view(), name='interests'),
 path('learner_quiz/', views.LQuizListView.as_view(), name='lquiz_list'),
 path('taken/', views.TakenQuizListView.as_view(), name='taken_quiz_list'),
 path('quiz/<int:pk>/', views.take_quiz, name='take_quiz'),
+path('learner/timetable/', views.learner_timetable, name='learner_timetable'),
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
- 
 ]

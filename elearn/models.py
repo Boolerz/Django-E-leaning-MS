@@ -154,3 +154,15 @@ class Lesson(models.Model):
 
     def __str__(self):
         return f"{self.course.name} - {self.day_of_week} {self.start_time}"
+
+class Timetable(models.Model):
+    day_of_week = models.CharField(max_length=20)
+    start_time = models.TimeField()
+    end_time = models.TimeField()
+    subject = models.ForeignKey(Course, on_delete=models.CASCADE)
+    instructor = models.ForeignKey(Instructor, on_delete=models.SET_NULL, null=True, blank=True)
+    location = models.CharField(max_length=100, blank=True)
+    google_meet_link = models.URLField(blank=True, null=True)  # Add this field
+
+    def __str__(self):
+        return f"{self.subject.name} - {self.day_of_week}"
