@@ -182,7 +182,7 @@ class AdminLearner(CreateView):
 
     def form_valid(self, form):
         user = form.save()
-        messages.success(self.request, 'Learner Was Added Successfully')
+        messages.success(self.request, "Learner added successfully")
         return redirect('addlearner')
 
 def learners_list(request):

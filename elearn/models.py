@@ -108,7 +108,7 @@ class Learner(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, primary_key=True)
     quizzes = models.ManyToManyField(Quiz, through='TakenQuiz')
     interests = models.ManyToManyField(Course, related_name='interested_learners')
-    course = models.ForeignKey(Course, on_delete=models.SET_NULL, null=True, blank=True, related_name='learners')
+    course = models.ForeignKey('Course', on_delete=models.SET_NULL, null=True, blank=True, related_name='learners')
 
     def get_unanswered_questions(self, quiz):
         answered_questions = self.quiz_answers.filter(answer__question__quiz=quiz).values_list(
