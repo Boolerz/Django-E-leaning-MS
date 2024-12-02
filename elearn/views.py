@@ -102,23 +102,41 @@ def timetable_view(request):
     """
     Generic timetable view for all users.
     """
+    courses = Course.objects.all()  # Fetch all available courses
+    instructors = Instructor.objects.all()  # Fetch all instructors
     timetable = {}
     lessons = Lesson.objects.all().order_by('day_of_week', 'start_time')
+
     for lesson in lessons:
         if lesson.day_of_week not in timetable:
             timetable[lesson.day_of_week] = []
         timetable[lesson.day_of_week].append(lesson)
 
-    return render(request, 'timetable.html', {'timetable': timetable})
+    return render(request, 'timetable.html', {
+        'timetable': timetable,
+        'courses': courses,  # Pass courses to the template
+        'instructors': instructors  # Pass instructors to the template
+    })
+
+
 def add_lesson(request):
     if request.method == 'POST':
-        # Handle form submission and create a new lesson
-        # ...
-        return redirect('admin_timetable')  # Redirect to admin timetable view
+        form = TimetableForm(request.POST)  # Assuming TimetableForm is for adding lessons
+        if form.is_valid():
+            # Handle form submission and create a new lesson
+            form.save()
+            return redirect('admin_timetable')  # Redirect to admin timetable view
     else:
         # Render a form to add a new lesson
-        form = TimetableForm()  # Assuming TimetableForm is for adding lessons
-        return render(request, 'edit_timetable.html', {'form': form})
+        form = TimetableForm()  # Create an empty form instance
+        courses = Course.objects.all()  # Fetch all available courses
+        instructors = Instructor.objects.all()  # Fetch all instructors
+        return render(request, 'edit_timetable.html', {
+            'form': form,
+            'courses': courses,  # Pass courses to the form template
+            'instructors': instructors  # Pass instructors to the form template
+        })
+
 
 def edit_timetable(request, pk):
     timetable = get_object_or_404(Timetable, pk=pk)
@@ -140,8 +158,8 @@ def edit_timetable(request, pk):
 
     return render(request, 'edit_timetable.html', {
         'timetable': timetable,
-        'courses': courses,
-        'instructors': instructors
+        'courses': courses,  # Pass courses to the template
+        'instructors': instructors  # Pass instructors to the template
     })
 
 
@@ -182,7 +200,7 @@ class AdminLearner(CreateView):
 
     def form_valid(self, form):
         user = form.save()
-        messages.success(self.request, 'Learner Was Added Successfully')
+        messages.success(self.request, "Learner added successfully")
         return redirect('addlearner')
 
 def learners_list(request):
@@ -350,14 +368,21 @@ def admin_timetable(request):
     """
     Fetch and group lessons by day of the week for the admin timetable view.
     """
+    courses = Course.objects.all()  # Fetch all available courses
+    instructors = Instructor.objects.all()  # Fetch all instructors
     timetable = {}
     lessons = Timetable.objects.all().order_by('day_of_week', 'start_time')
+
     for lesson in lessons:
         if lesson.day_of_week not in timetable:
             timetable[lesson.day_of_week] = []
         timetable[lesson.day_of_week].append(lesson)  # Pass the entire lesson object
 
-    return render(request, 'dashboard/admin/admin_timetable.html', {'timetable': timetable})
+    return render(request, 'dashboard/admin/admin_timetable.html', {
+        'timetable': timetable,  # Grouped timetable
+        'courses': courses,  # Pass courses to the template
+        'instructors': instructors  # Pass instructors to the template
+    })
 
 # Instructor Views
 def home_instructor(request):

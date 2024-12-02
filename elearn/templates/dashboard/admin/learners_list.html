@@ -27,6 +27,7 @@
                             <th>Name</th>
                             <th>Email</th>
                             <th>Courses</th>
+                            <th>Interests</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -35,6 +36,7 @@
                                 <td>{{ forloop.counter }}</td>
                                 <td>{{ learner.user.get_full_name }}</td>
                                 <td>{{ learner.user.email }}</td>
+                                <td>{{ learner.course.name }}</td>
                                 <td>
                                     {% for course in learner.interests.all %}
                                         {{ course.name }}{% if not forloop.last %}, {% endif %}

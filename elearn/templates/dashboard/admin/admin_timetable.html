@@ -91,7 +91,7 @@
                                                 {% for instructor in instructors %}
                                                     <option value="{{ instructor.id }}" 
                                                         {% if timetable.instructor_id == instructor.id %}selected{% endif %}>
-                                                        {{ instructor.name }}
+                                                        {{ instructor.user }}
                                                     </option>
                                                 {% endfor %}
                                             </select>
